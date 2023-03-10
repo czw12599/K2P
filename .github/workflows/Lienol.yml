@@ -13,7 +13,7 @@
 #
 #
 
-name: K2P
+name: K2P-Lienol
 on:
   workflow_dispatch:
     inputs:
