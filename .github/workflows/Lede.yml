@@ -13,7 +13,7 @@
 #
 #
 
-name: Lede-k2p
+name: K2P
 on:
   workflow_dispatch:
     inputs:
@@ -39,6 +39,7 @@ on:
           - 'xiaomi_redmi-router-ac2100'
           - 'xiaomi_redmi-router-ax6s'
           - 'xiaoyu_xy-c5'
+          - 'phicomm_k2p'
       CPU_SELECTION:
         description: 'CPU优选,增加编译速度'
         required: true
@@ -71,7 +72,7 @@ on:
       UPLOAD_RELEASE:
         description: '上传固件到 Github Releases'
         required: false
-        default: 'false'
+        default: 'true'
         type: boolean
       CACHEWRTBUILD_SWITCH:
         description: '缓存加速编译'
