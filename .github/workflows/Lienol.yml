@@ -13,32 +13,27 @@
 #
 #
 
-name: K2P-Lienol
+name: Lienol-源码
 on:
   workflow_dispatch:
     inputs:
       REPO_BRANCH:
-        description: '大雕源码'
+        description: 'Lienol源码-请选择分支'
         required: true
-        default: 'master'
+        default: '19.07'
         type: choice
         options:
+          - '19.07'
+          - '21.02'
+          - '22.03'
           - 'master'
+          - '19.07-test'
       CONFIG_FILE:
         description: '请选择配置文件'
         required: true
         default: 'mt7621'
         type: choice
         options:
-          - 'asus_rt-acrh17'
-          - 'd-team_newifi-d2'
-          - 'p2w_r619ac-128m'
-          - 'x86_32'
-          - 'x86_64'
-          - 'xiaomi_mi-router-4a-gigabit'
-          - 'xiaomi_redmi-router-ac2100'
-          - 'xiaomi_redmi-router-ax6s'
-          - 'xiaoyu_xy-c5'
           - 'phicomm_k2p'
       CPU_SELECTION:
         description: 'CPU优选,增加编译速度'
@@ -72,7 +67,7 @@ on:
       UPLOAD_RELEASE:
         description: '上传固件到 Github Releases'
         required: false
-        default: 'true'
+        default: 'false'
         type: boolean
       CACHEWRTBUILD_SWITCH:
         description: '缓存加速编译'
@@ -93,7 +88,7 @@ on:
 
 # 定时触发开启开始编译(把下面两个#去掉开启,时间设置请看定时开启编译说明)
 #  schedule:
-#   - cron: 35 4 * * *
+#   - cron: 35 18 * * *
 
 env:
   GITHUB_LINK: https://github.com/${{github.repository}}
@@ -120,7 +115,7 @@ jobs:
       matrix:
         target: [Lienol]
         
-        # 请勿对 target: [Lede] 做任何修改
+        # 请勿对 target: [Lienol] 做任何修改
         
     steps:
     - name: 密匙检测（密匙为空则退出）
@@ -133,7 +128,7 @@ jobs:
         fi
     
     - name: 准备结束
-      uses: actions/checkout@v3  
+      uses: actions/checkout@v3
 
     - name: 读取脚本设置
       run: |
@@ -154,7 +149,6 @@ jobs:
         export INPUTS_CPU_SELECTION="${{ github.event.inputs.CPU_SELECTION }}"
         source build/${{ env.FOLDER_NAME }}/common.sh && settings_variable
         source build/${{ env.FOLDER_NAME }}/common.sh && Diy_menu1
-        echo "${{ github.event.schedule }}"
         
     - name: 部署编译环境
       env:
@@ -168,7 +162,7 @@ jobs:
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
     
-    - name: 下载"${{ matrix.target }}"源码
+    - name: 下载"${{ matrix.target }}-${{ github.event.inputs.REPO_BRANCH }}"源码
       working-directory: /${{ env.DIY_WORK }}
       run: |
         git clone -b "${REPO_BRANCH}" --single-branch "${REPO_URL}" openwrt
