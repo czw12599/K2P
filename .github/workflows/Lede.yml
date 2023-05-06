@@ -1,3 +1,5 @@
+
+        
 #
 # 请大家记住拉取的是我的 281677160/build-actions 仓库，拉取的是其他仓库有问题，别问我，我也不清楚什么问题
 #
@@ -24,6 +26,7 @@ on:
         type: choice
         options:
           - 'master'
+          - 'gl-ax1800'
       CONFIG_FILE:
         description: '请选择配置文件'
         required: true
@@ -119,7 +122,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [Lede]
+        target: [Lede_source]
         
         # 请勿对 target: [Lede] 做任何修改
         
@@ -139,7 +142,7 @@ jobs:
     - name: 读取脚本设置
       run: |
         cd ${GITHUB_WORKSPACE}
-        git clone https://github.com/281677160/common-main build/common
+        git clone https://github.com/281677160/common build/common
         mv -f build/common/*.sh build/${{ env.FOLDER_NAME }}/
         chmod -R +x build
         export SOURCE_CODE="$(source "build/${{ matrix.target }}/settings.ini" && echo ${SOURCE_CODE})"
@@ -194,7 +197,7 @@ jobs:
       if: env.REPO_TOKEN
       run: |
         cd openwrt
-        source $BUILD_PATH/$DIY_PART_SH
+        source ${BUILD_PATH}/common.sh && Diy_zdypartsh
         source ${BUILD_PATH}/common.sh && Diy_Publicarea
         
     - name: 加载源、补丁和files文件夹
@@ -205,10 +208,7 @@ jobs:
     
     - name: SSH远程连接（制作.config配置文件）
       if: github.event.inputs.SSH_ACTION == 'true'
-      uses: makebl/debugger-action@main
-      env:
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      uses: danshui-git/debugger-action@main
 
     - name: 生成"${{ matrix.target }}"配置文件
       if: env.REPO_TOKEN
